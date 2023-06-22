@@ -15,25 +15,6 @@ const NutritionalInformations = () => {
     const [subHeading, setSubHeading] = useState("All Nutritional Information");
     const url = settings.baseApiUrl + "/nutritionalinformation";
 
-    // const mi = get();
-
-
-    // console.log(mi);
-    // console.log(url);
-
-    // async function getMenuItems(){
-    //     const mi = await fetch(settings.baseApiUrl + "/menuitems");
-    //     return mi.json();
-    // }
-    // const MI = getMenuItems();
-    // var MIData = MI.then((r) => {
-    //     return r.data;
-    // });
-
-    // console.log(MIData);
-
-
-
     const {
         error,
         isLoading,
@@ -43,6 +24,21 @@ const NutritionalInformations = () => {
     useEffect(() => {
         setSubHeading("All Nutritional Information");
     }, [pathname]);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        const term = document.getElementById("nutritionalitem-search-term").value;
+        if(term == '')
+            setSubHeading("All Nutritional Items");
+        else if(isNaN(term))
+            setSubHeading("All Nutritional Items containing '" + term + "'");
+        search(term);
+    }
+    const clearSearchBox = (e) => {
+        e.preventDefault();
+        document.getElementById("nutritionalitem-search-term").value = "";
+        search("");
+    }
 
     return (
         <>
@@ -58,12 +54,19 @@ const NutritionalInformations = () => {
                     <div className="image-loading">
                         Please wait while data is being loaded
                         <img src={require(`../loading.gif`)} alt="Loading ......"/>
-                </div>}
+                    </div>}
                 {nutritionalinformations && <div className="nutritionalinformation-container">
                     <div className="nutritionalinformation-list">
-                    {/* {console.log(nutritionalinformations.data)} */}
+                            <form style={{textAlign: "right", marginBottom: "3px"}} onSubmit={handleSearch}>
+                                <input id="student-search-term" placeholder="Enter search terms"/>
+                                <button type="submit" className="button-light"
+                                        style={{marginLeft: "5px"}}>Search</button>
+                                <button className="button-light" style={{marginLeft: "5px"}}
+                                        onClick={clearSearchBox}>Clear</button>
+                            </form>
+                        {/* {console.log(nutritionalinformations.data)} */}
                         {nutritionalinformations.data.map((nutritionalinformation) => (
-                            
+
                             <NavLink key={nutritionalinformation.nutritionalinformationID}
                                      className={({isActive}) => isActive ? "active" : ""}
                                      to={`/nutritionalinformations/${nutritionalinformation.nutritionalInformationID}`}>
@@ -74,7 +77,7 @@ const NutritionalInformations = () => {
                     <div className="nutritionalinformation">
                         <Outlet context={[subHeading, setSubHeading]}/>
                     </div>
-                        </div>}
+                </div>}
             </div>
         </>
     );
